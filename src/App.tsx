@@ -1,9 +1,14 @@
 import React from "react";
 import "./App.css";
 import { AppRouter } from "./router/app.router";
+import { AuthContextProvider } from "./context";
 
 function App() {
-  return <AppRouter />;
+  return (
+    <AuthContextProvider>
+      <AppRouter />
+    </AuthContextProvider>
+  );
 }
 
 export default App;

@@ -1,9 +1,11 @@
-import React, { FC, useState } from "react";
+import "./login.css";
+import React, { FC, useState, useContext } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Row, Col, Typography, Form, Alert, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Store } from "antd/lib/form/interface";
-import "./login.css";
+import { AuthContext } from "../../../context";
+import { RoleEnum } from "../../../type";
 
 interface LoginState {
   isLoading: boolean;
@@ -12,11 +14,16 @@ interface LoginState {
 
 const _Login: FC<RouteComponentProps> = ({ history }) => {
   const [loginAct, setLoginAct] = useState<LoginState>({ isLoading: false });
+  const { auth, setAuth } = useContext(AuthContext);
 
   const onFinish = async (values: Store) => {
-    setLoginAct({ isLoading: true });
     try {
-      console.log(values);
+      setAuth({
+        accessToken: "232",
+        id: 1,
+        role: RoleEnum.ADMIN,
+        username: "sdsda",
+      });
     } catch (e) {}
   };
 
