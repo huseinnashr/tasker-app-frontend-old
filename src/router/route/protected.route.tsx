@@ -1,9 +1,6 @@
-import React, { Component } from "react";
+import React, { FC } from "react";
 import { Route, RouteProps } from "react-router-dom";
 
-export class ProtectedRoute extends Component<RouteProps, any> {
-  render() {
-    const { children, ...rest } = this.props;
-    return <Route {...rest} render={() => children} />;
-  }
-}
+export const ProtectedRoute: FC<RouteProps> = ({ children, ...rest }) => {
+  return <Route {...rest} render={() => children} />;
+};

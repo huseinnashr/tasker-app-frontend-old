@@ -1,11 +1,11 @@
-import React from "react";
+import React, { FC } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Layout } from "antd";
 import { ProtectedRoute } from "./route/protected.route";
 import { Navbar } from "../component/navbar/navbar";
 import { Login } from "../domain/auth";
 
-const AppRouter = () => {
+const AppRouter: FC = () => {
   return (
     <BrowserRouter>
       <Switch>
