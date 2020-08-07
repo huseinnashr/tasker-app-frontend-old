@@ -1,24 +1,16 @@
 import "./login.css";
-import React, { FC, useState, useContext, useEffect } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Row, Col, Typography, Form, Alert, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Store } from "antd/lib/form/interface";
 import { AuthContext } from "../../../context";
-import { RoleEnum, SignInResponseDTO } from "../../../type";
+import { SignInResponseDTO } from "../../../type";
 import { useApi } from "../../../hook";
 
-interface LoginState {
-  isLoading: boolean;
-  error?: { message: string };
-}
-
-const _Login: FC<RouteComponentProps> = ({ history }) => {
-  const [loginAct, setLoginAct] = useState<LoginState>({ isLoading: false });
-  const [signIn, fetchSignIn] = useApi<{ data: SignInResponseDTO }>(
-    "POST",
-    "/auth/signin"
-  );
+const _Login: FC<RouteComponentProps> = () => {
+  const [signIn, signInError, signInLoading, fetchSignIn] = useApi<{
+    data: SignInResponseDTO;
+  }>("POST", "/auth/signin");
   const { setAuth } = useContext(AuthContext);
 
   useEffect(() => {
@@ -28,17 +20,9 @@ const _Login: FC<RouteComponentProps> = ({ history }) => {
     console.log(signIn);
   }, [signIn, setAuth]);
 
-  const onFinish = async (data: Store) => {
+  const onFinish = async (data: any) => {
     const { username, password } = data;
-    try {
-      setAuth({
-        accessToken: "232",
-        id: 1,
-        role: RoleEnum.ADMIN,
-        username: "sdsda",
-      });
-      await fetchSignIn({ username, password });
-    } catch (e) {}
+    await fetchSignIn({ username, password });
   };
 
   return (
@@ -53,8 +37,13 @@ const _Login: FC<RouteComponentProps> = ({ history }) => {
           <Typography.Title>Tasker App</Typography.Title>
         </Row>
         <Form onFinish={onFinish} className="login-form">
-          {loginAct.error ? (
-            <Alert message={loginAct.error.message} type="error" showIcon />
+          {signInError ? (
+            <Alert
+              message={signInError.message}
+              type="error"
+              style={{ marginBottom: "16px" }}
+              showIcon
+            />
           ) : null}
           <Form.Item
             name="username"
@@ -80,7 +69,7 @@ const _Login: FC<RouteComponentProps> = ({ history }) => {
               type="primary"
               htmlType="submit"
               className="login-form-button"
-              loading={loginAct.isLoading}
+              loading={signInLoading}
             >
               Log in
             </Button>
