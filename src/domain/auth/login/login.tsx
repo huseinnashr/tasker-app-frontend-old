@@ -1,11 +1,12 @@
 import "./login.css";
-import React, { FC, useState, useContext } from "react";
+import React, { FC, useState, useContext, useEffect } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Row, Col, Typography, Form, Alert, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Store } from "antd/lib/form/interface";
 import { AuthContext } from "../../../context";
-import { RoleEnum } from "../../../type";
+import { RoleEnum, SignInResponseDTO } from "../../../type";
+import { useApi } from "../../../hook";
 
 interface LoginState {
   isLoading: boolean;
@@ -14,9 +15,21 @@ interface LoginState {
 
 const _Login: FC<RouteComponentProps> = ({ history }) => {
   const [loginAct, setLoginAct] = useState<LoginState>({ isLoading: false });
-  const { auth, setAuth } = useContext(AuthContext);
+  const [signIn, fetchSignIn] = useApi<{ data: SignInResponseDTO }>(
+    "POST",
+    "/auth/signin"
+  );
+  const { setAuth } = useContext(AuthContext);
 
-  const onFinish = async (values: Store) => {
+  useEffect(() => {
+    if (signIn) {
+      setAuth(signIn.data);
+    }
+    console.log(signIn);
+  }, [signIn, setAuth]);
+
+  const onFinish = async (data: Store) => {
+    const { username, password } = data;
     try {
       setAuth({
         accessToken: "232",
@@ -24,6 +37,7 @@ const _Login: FC<RouteComponentProps> = ({ history }) => {
         role: RoleEnum.ADMIN,
         username: "sdsda",
       });
+      await fetchSignIn({ username, password });
     } catch (e) {}
   };
 
