@@ -3,7 +3,7 @@ import { SignInResponseDTO } from "../../type";
 
 interface AuthContextProps {
   auth: SignInResponseDTO | null;
-  setAuth: (auth: SignInResponseDTO) => void;
+  setAuth: (auth: SignInResponseDTO | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextProps>({

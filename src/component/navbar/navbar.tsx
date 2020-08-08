@@ -1,8 +1,11 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { Layout, Menu } from "antd";
 import { withRouter, Link, RouteComponentProps } from "react-router-dom";
+import { AuthContext } from "../../context";
+import { UserOutlined } from "@ant-design/icons";
 
 const _Navbar: FC<RouteComponentProps> = () => {
+  const { auth, setAuth } = useContext(AuthContext);
   return (
     <Layout.Header className="header">
       <img
@@ -24,9 +27,21 @@ const _Navbar: FC<RouteComponentProps> = () => {
         <Menu.Item key="manage-employee">
           <Link to="manage-employee">Employee</Link>
         </Menu.Item>
-        <Menu.Item key="logout" onClick={() => {}}>
-          Logout
-        </Menu.Item>
+        <Menu.SubMenu
+          icon={<UserOutlined />}
+          title={`${auth?.username} - ${auth?.role}`}
+          style={{ float: "right" }}
+        >
+          <Menu.Item key="setting">Setting</Menu.Item>
+          <Menu.Item
+            key="logout"
+            onClick={() => {
+              setAuth(null);
+            }}
+          >
+            Logout
+          </Menu.Item>
+        </Menu.SubMenu>
       </Menu>
     </Layout.Header>
   );
