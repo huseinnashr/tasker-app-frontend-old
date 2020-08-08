@@ -4,6 +4,7 @@ import { Layout } from "antd";
 import { Navbar } from "../component/navbar/navbar";
 import { Login } from "../domain/auth";
 import { UnauthorizedRoute, AuthorizedRoute } from "./route";
+import { EmployeeList } from "../domain/admin";
 
 const AppRouter: FC = () => {
   return (
@@ -15,8 +16,8 @@ const AppRouter: FC = () => {
         <AuthorizedRoute path="/">
           <Layout>
             <Navbar />
-            <AuthorizedRoute exact path="/manage-employee">
-              <Layout.Content>Manage Employee</Layout.Content>
+            <AuthorizedRoute exact path="/admin/employee">
+              <EmployeeList />
             </AuthorizedRoute>
             <Layout.Footer style={{ textAlign: "center" }}>
               Tasker App ©2020 Created by Husein Nashr

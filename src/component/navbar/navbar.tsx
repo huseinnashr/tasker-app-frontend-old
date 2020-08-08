@@ -24,8 +24,8 @@ const _Navbar: FC<RouteComponentProps> = () => {
         selectable={false}
         style={{ lineHeight: "64px" }}
       >
-        <Menu.Item key="manage-employee">
-          <Link to="manage-employee">Employee</Link>
+        <Menu.Item key="admin-employee">
+          <Link to="/admin/employee">Employee</Link>
         </Menu.Item>
         <Menu.SubMenu
           icon={<UserOutlined />}
