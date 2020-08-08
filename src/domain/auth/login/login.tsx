@@ -1,13 +1,12 @@
 import "./login.css";
 import React, { FC, useContext, useEffect } from "react";
-import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Row, Col, Typography, Form, Alert, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../../context";
 import { SignInResponseDTO } from "../../../type";
 import { useApi } from "../../../hook";
 
-const _Login: FC<RouteComponentProps> = ({ history }) => {
+const _Login: FC = () => {
   const [signIn, signInError, signInLoading, fetchSignIn] = useApi<{
     data: SignInResponseDTO;
   }>("POST", "/auth/signin");
@@ -16,9 +15,8 @@ const _Login: FC<RouteComponentProps> = ({ history }) => {
   useEffect(() => {
     if (signIn) {
       setAuth(signIn.data);
-      history.push("/");
     }
-  }, [signIn, setAuth, history]);
+  }, [signIn, setAuth]);
 
   const onFinish = async (data: any) => {
     const { username, password } = data;
@@ -80,4 +78,4 @@ const _Login: FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export const Login = withRouter(_Login);
+export const Login = _Login;
