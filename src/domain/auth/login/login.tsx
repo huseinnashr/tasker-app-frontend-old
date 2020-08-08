@@ -7,7 +7,7 @@ import { AuthContext } from "../../../context";
 import { SignInResponseDTO } from "../../../type";
 import { useApi } from "../../../hook";
 
-const _Login: FC<RouteComponentProps> = () => {
+const _Login: FC<RouteComponentProps> = ({ history }) => {
   const [signIn, signInError, signInLoading, fetchSignIn] = useApi<{
     data: SignInResponseDTO;
   }>("POST", "/auth/signin");
@@ -16,9 +16,9 @@ const _Login: FC<RouteComponentProps> = () => {
   useEffect(() => {
     if (signIn) {
       setAuth(signIn.data);
+      history.push("/");
     }
-    console.log(signIn);
-  }, [signIn, setAuth]);
+  }, [signIn, setAuth, history]);
 
   const onFinish = async (data: any) => {
     const { username, password } = data;
