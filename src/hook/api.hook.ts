@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useCallback } from "react";
 import axios, { Method } from "axios";
 import { AuthContext } from "../context";
 import { ErrorResponseDTO } from "../type";
@@ -19,42 +19,47 @@ export const useApi = <T>(
   const [error, setError] = useState<ErrorResponseDTO | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const api = axios.create({
-    baseURL,
-    headers: { Authorization: auth ? `Bearer ${auth.accessToken}` : "" },
-    method,
-    url,
-  });
+  const getApi = useCallback(() => {
+    return axios.create({
+      baseURL,
+      headers: { Authorization: auth ? `Bearer ${auth.accessToken}` : "" },
+      method,
+      url,
+    });
+  }, [method, url, auth]);
 
-  const fetch = async (data?: any) => {
-    setData(null);
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await api.request<T>({ data });
-      setData(res.data);
-    } catch (e) {
-      if (e.response) {
-        const { status, data } = e.response;
-        if (data && data.message) {
-          setError({ statusCode: status as number, message: data.message });
-        } else {
+  const fetch = useCallback(
+    async (data?: any) => {
+      setData(null);
+      setError(null);
+      setLoading(true);
+      try {
+        const res = await getApi().request<T>({ data });
+        setData(res.data);
+      } catch (e) {
+        if (e.response) {
+          const { status, data } = e.response;
+          if (data && data.message) {
+            setError({ statusCode: status as number, message: data.message });
+          } else {
+            setError({
+              statusCode: status as number,
+              message: `Unknown ${status} Server Response`,
+            });
+          }
+        } else if (e.request) {
           setError({
-            statusCode: status as number,
-            message: `Unknown ${status} Server Response`,
+            statusCode: 0,
+            message: "You're offline or server is down",
           });
+        } else {
+          console.log(e);
         }
-      } else if (e.request) {
-        setError({
-          statusCode: 0,
-          message: "You're offline or server is down",
-        });
-      } else {
-        console.log(e);
       }
-    }
-    setLoading(false);
-  };
+      setLoading(false);
+    },
+    [getApi, setData, setError, setLoading]
+  );
 
   return [data, error, loading, fetch];
 };
