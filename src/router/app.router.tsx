@@ -1,28 +1,28 @@
 import React, { FC } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import { Layout } from "antd";
-import { ProtectedRoute } from "./route/protected.route";
 import { Navbar } from "../component/navbar/navbar";
 import { Login } from "../domain/auth";
+import { UnauthorizedRoute, AuthorizedRoute } from "./route";
 
 const AppRouter: FC = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path="/login">
+        <UnauthorizedRoute exact path="/login">
           <Login />
-        </Route>
-        <ProtectedRoute path="/">
+        </UnauthorizedRoute>
+        <AuthorizedRoute path="/">
           <Layout>
             <Navbar />
-            <ProtectedRoute exact path="/manage-employee">
+            <AuthorizedRoute exact path="/manage-employee">
               <Layout.Content>Manage Employee</Layout.Content>
-            </ProtectedRoute>
+            </AuthorizedRoute>
             <Layout.Footer style={{ textAlign: "center" }}>
               Tasker App ©2020 Created by Husein Nashr
             </Layout.Footer>
           </Layout>
-        </ProtectedRoute>
+        </AuthorizedRoute>
       </Switch>
     </BrowserRouter>
   );
