@@ -1,10 +1,12 @@
 import React, { FC } from "react";
 import { BrowserRouter, Switch } from "react-router-dom";
 import { Layout } from "antd";
-import { Navbar } from "../component/navbar/navbar";
 import { Login } from "./auth";
 import { UnauthorizedRoute, AuthorizedRoute } from "../route";
 import { EmployeeList } from "./admin";
+import { AppContent } from "./app-content";
+import { AppFooter } from "./app-footer";
+import { AppNavbar } from "./app-navbar";
 
 const AppRouter: FC = () => {
   return (
@@ -15,13 +17,13 @@ const AppRouter: FC = () => {
         </UnauthorizedRoute>
         <AuthorizedRoute path="/">
           <Layout>
-            <Navbar />
-            <AuthorizedRoute exact path="/admin/employee">
-              <EmployeeList />
-            </AuthorizedRoute>
-            <Layout.Footer style={{ textAlign: "center" }}>
-              Tasker App ©2020 Created by Husein Nashr
-            </Layout.Footer>
+            <AppNavbar />
+            <AppContent>
+              <AuthorizedRoute exact path="/admin/employee">
+                <EmployeeList />
+              </AuthorizedRoute>
+            </AppContent>
+            <AppFooter />
           </Layout>
         </AuthorizedRoute>
       </Switch>

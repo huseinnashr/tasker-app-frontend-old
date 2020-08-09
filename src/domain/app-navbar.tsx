@@ -1,7 +1,7 @@
 import React, { FC, useContext } from "react";
 import { Layout, Menu } from "antd";
 import { withRouter, Link, RouteComponentProps } from "react-router-dom";
-import { AuthContext } from "../../context";
+import { AuthContext } from "../context";
 import { UserOutlined } from "@ant-design/icons";
 
 const _Navbar: FC<RouteComponentProps> = () => {
@@ -47,5 +47,4 @@ const _Navbar: FC<RouteComponentProps> = () => {
   );
 };
 
-const Navbar = withRouter(_Navbar);
-export { Navbar };
+export const AppNavbar = withRouter(_Navbar);
