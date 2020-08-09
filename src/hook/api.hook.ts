@@ -7,7 +7,8 @@ const baseURL = "http://localhost:1337";
 
 export const useApi = <T>(
   method: Method,
-  url: string
+  url: string,
+  errorEffect: boolean = true
 ): [
   T | null,
   ErrorResponseDTO | null,
@@ -39,7 +40,7 @@ export const useApi = <T>(
       } catch (e) {
         if (e.response) {
           const { status, data } = e.response;
-          if (status === 401) {
+          if (errorEffect && status === 401) {
             setAuth(null);
           } else if (data && data.message) {
             setError({ statusCode: status as number, message: data.message });
@@ -60,7 +61,7 @@ export const useApi = <T>(
       }
       setLoading(false);
     },
-    [getApi, setAuth, setData, setError, setLoading]
+    [getApi, errorEffect, setAuth, setData, setError, setLoading]
   );
 
   return [data, error, loading, fetch];

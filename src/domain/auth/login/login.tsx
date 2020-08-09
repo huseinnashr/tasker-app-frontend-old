@@ -9,7 +9,7 @@ import { useApi } from "../../../hook";
 const _Login: FC = () => {
   const [signIn, signInError, signInLoading, fetchSignIn] = useApi<{
     data: SignInResponseDTO;
-  }>("POST", "/auth/signin");
+  }>("POST", "/auth/signin", false);
   const { setAuth } = useContext(AuthContext);
 
   useEffect(() => {
