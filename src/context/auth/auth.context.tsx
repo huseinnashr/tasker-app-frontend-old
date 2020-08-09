@@ -1,4 +1,4 @@
-import React, { createContext, FC, useState } from "react";
+import React, { createContext, FC, useState, useCallback } from "react";
 import { SignInResponseDTO } from "../../type";
 
 interface AuthContextProps {
@@ -17,14 +17,18 @@ export const AuthContextProvider: FC = ({ children }) => {
 
   const [auth, _setAuth] = useState<SignInResponseDTO | null>(initialAuth);
 
-  const setAuth = (auth: SignInResponseDTO | null) => {
-    if (auth) {
-      localStorage.setItem("auth", JSON.stringify(auth));
-    } else {
-      localStorage.removeItem("auth");
-    }
-    _setAuth(auth);
-  };
+  const setAuth = useCallback(
+    (auth: SignInResponseDTO | null) => {
+      if (auth) {
+        localStorage.setItem("auth", JSON.stringify(auth));
+      } else {
+        localStorage.removeItem("auth");
+      }
+      _setAuth(auth);
+    },
+    [_setAuth]
+  );
+
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>
       {children}
