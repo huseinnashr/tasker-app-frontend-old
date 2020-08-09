@@ -14,7 +14,7 @@ export const useApi = <T>(
   boolean,
   (data?: any) => Promise<void>
 ] => {
-  const { auth } = useContext(AuthContext);
+  const { auth, setAuth } = useContext(AuthContext);
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<ErrorResponseDTO | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,7 +39,9 @@ export const useApi = <T>(
       } catch (e) {
         if (e.response) {
           const { status, data } = e.response;
-          if (data && data.message) {
+          if (status === 401) {
+            setAuth(null);
+          } else if (data && data.message) {
             setError({ statusCode: status as number, message: data.message });
           } else {
             setError({
@@ -58,7 +60,7 @@ export const useApi = <T>(
       }
       setLoading(false);
     },
-    [getApi, setData, setError, setLoading]
+    [getApi, setAuth, setData, setError, setLoading]
   );
 
   return [data, error, loading, fetch];
