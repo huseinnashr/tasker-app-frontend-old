@@ -2,9 +2,9 @@ import React, { FC } from "react";
 import { BrowserRouter, Switch } from "react-router-dom";
 import { Layout } from "antd";
 import { Navbar } from "../component/navbar/navbar";
-import { Login } from "../domain/auth";
-import { UnauthorizedRoute, AuthorizedRoute } from "./route";
-import { EmployeeList } from "../domain/admin";
+import { Login } from "./auth";
+import { UnauthorizedRoute, AuthorizedRoute } from "../route";
+import { EmployeeList } from "./admin";
 
 const AppRouter: FC = () => {
   return (
