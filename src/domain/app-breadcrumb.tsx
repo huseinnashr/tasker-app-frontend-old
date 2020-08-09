@@ -13,7 +13,11 @@ const _AppBreadcrumb: FC<RouteComponentProps> = ({ history, location }) => {
 
         return (
           <Breadcrumb.Item key={p}>
-            <Link to={fullPath}>{idx === 0 ? "Home" : title}</Link>
+            {idx < paths.length - 1 ? (
+              <Link to={fullPath}>{idx === 0 ? "Home" : title}</Link>
+            ) : (
+              title
+            )}
           </Breadcrumb.Item>
         );
       })}
