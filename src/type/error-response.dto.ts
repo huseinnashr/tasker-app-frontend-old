@@ -1,4 +1,4 @@
 export interface ErrorResponseDTO {
   statusCode: number;
-  message: string;
+  message: string | string[];
 }

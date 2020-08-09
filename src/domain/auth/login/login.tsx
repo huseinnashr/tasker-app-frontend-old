@@ -5,6 +5,7 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../../context";
 import { SignInResponseDTO } from "../../../type";
 import { useApi } from "../../../hook";
+import { AlertMessage } from "../../../component";
 
 const _Login: FC = () => {
   const [signIn, signInError, signInLoading, fetchSignIn] = useApi<{
@@ -37,7 +38,7 @@ const _Login: FC = () => {
         <Form onFinish={onFinish} className="login-form">
           {signInError ? (
             <Alert
-              message={signInError.message}
+              message={<AlertMessage message={signInError.message} />}
               type="error"
               style={{ marginBottom: "16px" }}
               showIcon
