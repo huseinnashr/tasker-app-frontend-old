@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useCallback } from "react";
 import { Button, Table } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useApi } from "../../../hook";
@@ -6,14 +6,11 @@ import { EmployeeListResponseDTO, EmployeeResponseDTO } from "../../../type";
 import { EmployeeCreate } from "./employee-create";
 
 export const EmployeeList: FC = () => {
-  const [employees, setEmployees] = useState<EmployeeListResponseDTO>();
+  const [employees, setEmployees] = useState<EmployeeResponseDTO[]>([]);
 
   const [, loading, fetch] = useApi<EmployeeListResponseDTO>({
     method: "GET",
     url: "/employee",
-    onSuccess: (data) => {
-      setEmployees(data);
-    },
   });
   const [createVisible, setCreateVisible] = useState(false);
 
@@ -44,14 +41,23 @@ export const EmployeeList: FC = () => {
     },
   ];
 
-  useEffect(() => {
-    fetch();
+  const onFetch = useCallback(async () => {
+    const res = await fetch();
+    if (res) {
+      setEmployees(res.data);
+    }
   }, [fetch]);
 
-  const onCreate = (data: EmployeeResponseDTO) => {
-    console.log(data);
-  };
+  useEffect(() => {
+    onFetch();
+  }, [onFetch]);
 
+  const onCreate = (data: EmployeeResponseDTO) => {
+    if (employees) {
+      setEmployees([data, ...employees]);
+    }
+  };
+  console.log("component", employees?.length);
   return (
     <div style={{ background: "#fff", padding: "24px" }}>
       <Button
@@ -67,7 +73,7 @@ export const EmployeeList: FC = () => {
         rowKey="id"
         columns={columns}
         loading={loading}
-        dataSource={employees?.data}
+        dataSource={employees}
       />
       <EmployeeCreate
         onCreate={onCreate}

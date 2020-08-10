@@ -1,31 +1,28 @@
-import { useState, useContext, useCallback, useEffect } from "react";
+import { useState, useContext, useCallback } from "react";
 import axios, { Method } from "axios";
 import { AuthContext } from "../context";
 import { ErrorResponseDTO } from "../type";
 
 const baseURL = "http://localhost:1337";
 
-interface useApiProps<T> {
+interface useApiProps {
   method: Method;
   url: string;
-  onSuccess: (data: T) => void;
   errorEffect?: boolean;
 }
 
-type useApiReturn<U> = [
+type useApiReturn<T, U> = [
   ErrorResponseDTO | null,
   boolean,
-  (data?: U) => Promise<void>
+  (data?: U) => Promise<T | null>
 ];
 
 export const useApi = <T, U = any>({
   method,
   url,
-  onSuccess,
   errorEffect = true,
-}: useApiProps<T>): useApiReturn<U> => {
+}: useApiProps): useApiReturn<T, U> => {
   const { auth, setAuth } = useContext(AuthContext);
-  const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<ErrorResponseDTO | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -38,24 +35,21 @@ export const useApi = <T, U = any>({
     });
   }, [method, url, auth]);
 
-  useEffect(() => {
-    if (data) onSuccess(data);
-  }, [data, onSuccess]);
-
   const fetch = useCallback(
-    async (data?: U) => {
-      setData(null);
+    async (data?: U): Promise<T | null> => {
       setError(null);
       setLoading(true);
       try {
         const res = await getApi().request<T>({ data });
-        setData(res.data);
+        setLoading(false);
+        return res.data;
       } catch (e) {
+        setLoading(false);
         if (e.response) {
           const { status, data } = e.response;
           if (errorEffect && status === 401) {
             setAuth(null);
-            return;
+            return null;
           } else if (data && data.message) {
             setError({ statusCode: status as number, message: data.message });
           } else {
@@ -73,9 +67,9 @@ export const useApi = <T, U = any>({
           console.log(e);
         }
       }
-      setLoading(false);
+      return null;
     },
-    [getApi, errorEffect, setAuth, setData, setError, setLoading]
+    [getApi, errorEffect, setAuth, setError, setLoading]
   );
 
   return [error, loading, fetch];

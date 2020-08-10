@@ -15,15 +15,15 @@ const _Login: FC = () => {
   >({
     method: "POST",
     url: "/auth/signin",
-    onSuccess: ({ data }) => {
-      setAuth(data);
-    },
     errorEffect: false,
   });
 
   const onFinish = async (data: any) => {
     const { username, password } = data;
-    await fetchSignIn({ username, password });
+    const res = await fetchSignIn({ username, password });
+    if (res) {
+      setAuth(res.data);
+    }
   };
 
   return (

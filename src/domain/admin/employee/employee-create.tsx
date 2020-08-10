@@ -24,10 +24,6 @@ export const EmployeeCreate: FC<EmployeeManageProps> = ({
   const [error, loading, create] = useApi<EmployeeListEntityResponseDTO>({
     method: "POST",
     url: "/employee",
-    onSuccess: ({ data }) => {
-      setVisible(false);
-      onCreate(data);
-    },
   });
 
   useEffect(() => {
@@ -36,10 +32,14 @@ export const EmployeeCreate: FC<EmployeeManageProps> = ({
     }
   }, [error]);
 
-  const createUser = async () => {
+  const _onCreate = async () => {
     try {
       const formData = await form.validateFields();
-      await create(formData);
+      const res = await create(formData);
+      if (res) {
+        setVisible(false);
+        onCreate(res.data);
+      }
     } catch {}
   };
 
@@ -68,7 +68,7 @@ export const EmployeeCreate: FC<EmployeeManageProps> = ({
           <Button
             disabled={loading}
             loading={loading}
-            onClick={createUser}
+            onClick={_onCreate}
             type="primary"
           >
             Create
