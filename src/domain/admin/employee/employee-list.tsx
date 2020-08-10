@@ -2,13 +2,20 @@ import React, { FC, useEffect, useState } from "react";
 import { Button, Table } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useApi } from "../../../hook";
-import { EmployeeResponseDTO } from "../../../type";
+import { EmployeeListResponseDTO, EmployeeResponseDTO } from "../../../type";
 import { EmployeeCreate } from "./employee-create";
 
 export const EmployeeList: FC = () => {
-  const [employees, , loading, fetch] = useApi<{
-    data: EmployeeResponseDTO[];
-  }>("GET", "/employee");
+  const [employees, setEmployees] = useState<EmployeeListResponseDTO>();
+
+  const onFetchSuccess = (data: EmployeeListResponseDTO) => {
+    setEmployees(data);
+  };
+  const [, loading, fetch] = useApi<EmployeeListResponseDTO>(
+    "GET",
+    "/employee",
+    onFetchSuccess
+  );
   const [createVisible, setCreateVisible] = useState(false);
 
   const columns = [
@@ -37,6 +44,7 @@ export const EmployeeList: FC = () => {
       ),
     },
   ];
+
   useEffect(() => {
     fetch();
   }, [fetch]);

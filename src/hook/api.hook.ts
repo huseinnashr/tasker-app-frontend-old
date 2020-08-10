@@ -1,4 +1,4 @@
-import { useState, useContext, useCallback } from "react";
+import { useState, useContext, useCallback, useEffect } from "react";
 import axios, { Method } from "axios";
 import { AuthContext } from "../context";
 import { ErrorResponseDTO } from "../type";
@@ -8,13 +8,9 @@ const baseURL = "http://localhost:1337";
 export const useApi = <T>(
   method: Method,
   url: string,
+  onSuccess: (data: T) => void,
   errorEffect: boolean = true
-): [
-  T | null,
-  ErrorResponseDTO | null,
-  boolean,
-  (data?: any) => Promise<void>
-] => {
+): [ErrorResponseDTO | null, boolean, (data?: any) => Promise<void>] => {
   const { auth, setAuth } = useContext(AuthContext);
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<ErrorResponseDTO | null>(null);
@@ -28,6 +24,10 @@ export const useApi = <T>(
       url,
     });
   }, [method, url, auth]);
+
+  useEffect(() => {
+    if (data) onSuccess(data);
+  }, [data, onSuccess]);
 
   const fetch = useCallback(
     async (data?: any) => {
@@ -65,5 +65,5 @@ export const useApi = <T>(
     [getApi, errorEffect, setAuth, setData, setError, setLoading]
   );
 
-  return [data, error, loading, fetch];
+  return [error, loading, fetch];
 };

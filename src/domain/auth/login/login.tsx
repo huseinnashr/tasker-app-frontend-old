@@ -1,5 +1,5 @@
 import "./login.css";
-import React, { FC, useContext, useEffect } from "react";
+import React, { FC, useContext } from "react";
 import { Row, Col, Typography, Form, Alert, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../../context";
@@ -8,16 +8,14 @@ import { useApi } from "../../../hook";
 import { AlertMessage } from "../../../component";
 
 const _Login: FC = () => {
-  const [signIn, signInError, signInLoading, fetchSignIn] = useApi<{
-    data: SignInResponseDTO;
-  }>("POST", "/auth/signin", false);
   const { setAuth } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (signIn) {
-      setAuth(signIn.data);
-    }
-  }, [signIn, setAuth]);
+  const onSignInSuccess = (data: { data: SignInResponseDTO }) => {
+    setAuth(data.data);
+  };
+  const [signInError, signInLoading, fetchSignIn] = useApi<{
+    data: SignInResponseDTO;
+  }>("POST", "/auth/signin", onSignInSuccess, false);
 
   const onFinish = async (data: any) => {
     const { username, password } = data;
