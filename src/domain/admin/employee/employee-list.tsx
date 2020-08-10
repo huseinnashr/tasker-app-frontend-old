@@ -1,21 +1,26 @@
-import "./employee-list.css";
-import React, { FC, useEffect } from "react";
-import { Button, Table, Layout } from "antd";
+import React, { FC, useEffect, useState } from "react";
+import { Button, Table } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useApi } from "../../../hook";
 import { EmployeeResponseDTO } from "../../../type";
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { EmployeeCreate } from "./employee-create";
 
-const _EmployeeList: FC<RouteComponentProps> = ({ history }) => {
+export const EmployeeList: FC = () => {
   const [employees, , loading, fetch] = useApi<{
     data: EmployeeResponseDTO[];
   }>("GET", "/employee");
+  const [createVisible, setCreateVisible] = useState(false);
 
   const columns = [
     {
       title: "Username",
       dataIndex: "username",
       key: "username",
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
     },
     {
       title: "Action",
@@ -36,6 +41,10 @@ const _EmployeeList: FC<RouteComponentProps> = ({ history }) => {
     fetch();
   }, [fetch]);
 
+  const onCreate = (data: any) => {
+    console.log(data);
+  };
+
   return (
     <div style={{ background: "#fff", padding: "24px" }}>
       <Button
@@ -43,7 +52,7 @@ const _EmployeeList: FC<RouteComponentProps> = ({ history }) => {
         type="primary"
         style={{ marginBottom: "16px" }}
         icon={<PlusOutlined />}
-        onClick={() => history.push("/admin/employee/create")}
+        onClick={() => setCreateVisible(true)}
       >
         Create an Employee
       </Button>
@@ -53,8 +62,11 @@ const _EmployeeList: FC<RouteComponentProps> = ({ history }) => {
         loading={loading}
         dataSource={employees?.data}
       />
+      <EmployeeCreate
+        onCreate={onCreate}
+        visible={createVisible}
+        setVisible={setCreateVisible}
+      />
     </div>
   );
 };
-
-export const EmployeeList = withRouter(_EmployeeList);
