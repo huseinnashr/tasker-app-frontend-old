@@ -45,13 +45,14 @@ export const EmployeeCreate: FC<EmployeeManageProps> = ({
 
   return (
     <Drawer
-      forceRender={true}
       title={"Create a new Employee"}
       width={420}
       visible={visible}
-      onClose={() => form.resetFields()}
-      bodyStyle={{ paddingBottom: 80 }}
+      afterVisibleChange={(visible) => {
+        if (!visible) form.resetFields();
+      }}
       closable={false}
+      bodyStyle={{ paddingBottom: 80 }}
       footer={
         <div
           style={{
