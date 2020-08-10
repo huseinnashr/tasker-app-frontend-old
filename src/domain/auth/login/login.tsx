@@ -3,19 +3,19 @@ import React, { FC, useContext } from "react";
 import { Row, Col, Typography, Form, Alert, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../../context";
-import { SignInResponseDTO } from "../../../type";
+import { SignInEntityResponseDTO } from "../../../type";
 import { useApi } from "../../../hook";
 import { AlertMessage } from "../../../component";
 
 const _Login: FC = () => {
   const { setAuth } = useContext(AuthContext);
 
-  const onSignInSuccess = (data: { data: SignInResponseDTO }) => {
-    setAuth(data.data);
+  const onSignInSuccess = ({ data }: SignInEntityResponseDTO) => {
+    setAuth(data);
   };
-  const [signInError, signInLoading, fetchSignIn] = useApi<{
-    data: SignInResponseDTO;
-  }>("POST", "/auth/signin", onSignInSuccess, false);
+  const [signInError, signInLoading, fetchSignIn] = useApi<
+    SignInEntityResponseDTO
+  >("POST", "/auth/signin", onSignInSuccess, false);
 
   const onFinish = async (data: any) => {
     const { username, password } = data;

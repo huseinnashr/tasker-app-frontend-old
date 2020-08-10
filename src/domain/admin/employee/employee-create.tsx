@@ -1,13 +1,17 @@
 import React, { FC, useEffect } from "react";
 import { Button, Form, Input, Drawer, Alert, Select } from "antd";
 import { useApi } from "../../../hook";
-import { EmployeeResponseDTO, Roles } from "../../../type";
+import {
+  EmployeeResponseDTO,
+  Roles,
+  EmployeeListEntityResponseDTO,
+} from "../../../type";
 import { AlertMessage } from "../../../component";
 
 interface EmployeeManageProps {
   visible: boolean;
   setVisible: (data: boolean) => void;
-  onCreate: (data: any) => void;
+  onCreate: (data: EmployeeResponseDTO) => void;
 }
 
 export const EmployeeCreate: FC<EmployeeManageProps> = ({
@@ -17,16 +21,13 @@ export const EmployeeCreate: FC<EmployeeManageProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const [employee, error, loading, create] = useApi<{
+  const onCreateSuccess = ({ data }: EmployeeListEntityResponseDTO) => {
+    setVisible(false);
+    onCreate(data);
+  };
+  const [error, loading, create] = useApi<{
     data: EmployeeResponseDTO;
-  }>("POST", "/employee");
-
-  useEffect(() => {
-    if (employee) {
-      setVisible(false);
-      onCreate(employee);
-    }
-  }, [employee, setVisible, onCreate]);
+  }>("POST", "/employee", onCreateSuccess);
 
   useEffect(() => {
     if (error) {
@@ -38,10 +39,6 @@ export const EmployeeCreate: FC<EmployeeManageProps> = ({
     try {
       const formData = await form.validateFields();
       await create(formData);
-      if (employee) {
-        setVisible(false);
-        onCreate(employee);
-      }
     } catch {}
   };
 

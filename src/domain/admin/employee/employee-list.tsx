@@ -49,7 +49,7 @@ export const EmployeeList: FC = () => {
     fetch();
   }, [fetch]);
 
-  const onCreate = (data: any) => {
+  const onCreate = (data: EmployeeResponseDTO) => {
     console.log(data);
   };
 
