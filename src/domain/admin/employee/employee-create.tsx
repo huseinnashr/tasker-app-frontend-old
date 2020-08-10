@@ -21,13 +21,14 @@ export const EmployeeCreate: FC<EmployeeManageProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const onCreateSuccess = ({ data }: EmployeeListEntityResponseDTO) => {
-    setVisible(false);
-    onCreate(data);
-  };
-  const [error, loading, create] = useApi<{
-    data: EmployeeResponseDTO;
-  }>("POST", "/employee", onCreateSuccess);
+  const [error, loading, create] = useApi<EmployeeListEntityResponseDTO>({
+    method: "POST",
+    url: "/employee",
+    onSuccess: ({ data }) => {
+      setVisible(false);
+      onCreate(data);
+    },
+  });
 
   useEffect(() => {
     if (error) {

@@ -5,12 +5,25 @@ import { ErrorResponseDTO } from "../type";
 
 const baseURL = "http://localhost:1337";
 
-export const useApi = <T>(
-  method: Method,
-  url: string,
-  onSuccess: (data: T) => void,
-  errorEffect: boolean = true
-): [ErrorResponseDTO | null, boolean, (data?: any) => Promise<void>] => {
+interface useApiProps<T> {
+  method: Method;
+  url: string;
+  onSuccess: (data: T) => void;
+  errorEffect?: boolean;
+}
+
+type useApiReturn<U> = [
+  ErrorResponseDTO | null,
+  boolean,
+  (data?: U) => Promise<void>
+];
+
+export const useApi = <T, U = any>({
+  method,
+  url,
+  onSuccess,
+  errorEffect = true,
+}: useApiProps<T>): useApiReturn<U> => {
   const { auth, setAuth } = useContext(AuthContext);
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<ErrorResponseDTO | null>(null);
@@ -30,7 +43,7 @@ export const useApi = <T>(
   }, [data, onSuccess]);
 
   const fetch = useCallback(
-    async (data?: any) => {
+    async (data?: U) => {
       setData(null);
       setError(null);
       setLoading(true);

@@ -10,12 +10,16 @@ import { AlertMessage } from "../../../component";
 const _Login: FC = () => {
   const { setAuth } = useContext(AuthContext);
 
-  const onSignInSuccess = ({ data }: SignInEntityResponseDTO) => {
-    setAuth(data);
-  };
   const [signInError, signInLoading, fetchSignIn] = useApi<
     SignInEntityResponseDTO
-  >("POST", "/auth/signin", onSignInSuccess, false);
+  >({
+    method: "POST",
+    url: "/auth/signin",
+    onSuccess: ({ data }) => {
+      setAuth(data);
+    },
+    errorEffect: false,
+  });
 
   const onFinish = async (data: any) => {
     const { username, password } = data;

@@ -8,14 +8,13 @@ import { EmployeeCreate } from "./employee-create";
 export const EmployeeList: FC = () => {
   const [employees, setEmployees] = useState<EmployeeListResponseDTO>();
 
-  const onFetchSuccess = (data: EmployeeListResponseDTO) => {
-    setEmployees(data);
-  };
-  const [, loading, fetch] = useApi<EmployeeListResponseDTO>(
-    "GET",
-    "/employee",
-    onFetchSuccess
-  );
+  const [, loading, fetch] = useApi<EmployeeListResponseDTO>({
+    method: "GET",
+    url: "/employee",
+    onSuccess: (data) => {
+      setEmployees(data);
+    },
+  });
   const [createVisible, setCreateVisible] = useState(false);
 
   const columns = [
