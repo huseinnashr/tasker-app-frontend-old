@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import { Button, Form, Input, Drawer, Alert, Select } from "antd";
 import { useApi } from "../../../hook";
 import {
@@ -25,12 +25,6 @@ export const EmployeeCreate: FC<EmployeeManageProps> = ({
     method: "POST",
     url: "/employee",
   });
-
-  useEffect(() => {
-    if (error) {
-      console.log(error);
-    }
-  }, [error]);
 
   const _onCreate = async () => {
     try {

@@ -57,7 +57,7 @@ export const EmployeeList: FC = () => {
       setEmployees([data, ...employees]);
     }
   };
-  console.log("component", employees?.length);
+
   return (
     <div style={{ background: "#fff", padding: "24px" }}>
       <Button
