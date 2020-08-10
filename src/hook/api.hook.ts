@@ -42,6 +42,7 @@ export const useApi = <T>(
           const { status, data } = e.response;
           if (errorEffect && status === 401) {
             setAuth(null);
+            return;
           } else if (data && data.message) {
             setError({ statusCode: status as number, message: data.message });
           } else {
