@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useCallback } from "react";
+import React, { FC, useEffect, useState, useCallback, useRef } from "react";
 import { Button, Table } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useApi } from "../../../hook";
@@ -12,7 +12,7 @@ export const EmployeeList: FC = () => {
     method: "GET",
     url: "/employee",
   });
-  const [createVisible, setCreateVisible] = useState(false);
+  const createRef = useRef<EmployeeCreate>(null);
 
   const columns = [
     {
@@ -65,7 +65,7 @@ export const EmployeeList: FC = () => {
         type="primary"
         style={{ marginBottom: "16px" }}
         icon={<PlusOutlined />}
-        onClick={() => setCreateVisible(true)}
+        onClick={() => createRef.current?.openDrawer()}
       >
         Create an Employee
       </Button>
@@ -75,11 +75,7 @@ export const EmployeeList: FC = () => {
         loading={loading}
         dataSource={employees}
       />
-      <EmployeeCreate
-        onCreate={onCreate}
-        visible={createVisible}
-        setVisible={setCreateVisible}
-      />
+      <EmployeeCreate ref={createRef} onCreate={onCreate} />
     </div>
   );
 };

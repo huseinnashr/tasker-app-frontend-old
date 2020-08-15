@@ -1,115 +1,150 @@
-import React, { FC } from "react";
+import React, { Component } from "react";
 import { Button, Form, Input, Drawer, Alert, Select } from "antd";
-import { useApi } from "../../../hook";
 import {
   EmployeeResponseDTO,
   Roles,
   EmployeeListEntityResponseDTO,
 } from "../../../type";
 import { AlertMessage } from "../../../component";
+import { FormInstance } from "antd/lib/form";
+import { AuthContext } from "../../../context";
+import { ApiService } from "../../../service/api.service";
 
 interface EmployeeManageProps {
-  visible: boolean;
-  setVisible: (data: boolean) => void;
   onCreate: (data: EmployeeResponseDTO) => void;
 }
 
-export const EmployeeCreate: FC<EmployeeManageProps> = ({
-  visible,
-  setVisible,
-  onCreate,
-}) => {
-  const [form] = Form.useForm();
+interface _EmployeeManageState {
+  visible: boolean;
+}
 
-  const [error, loading, create] = useApi<EmployeeListEntityResponseDTO>({
-    method: "POST",
-    url: "/employee",
-  });
+export interface OpenDrawer {
+  openDrawer: () => void;
+}
 
-  const _onCreate = async () => {
+export class EmployeeCreate
+  extends Component<EmployeeManageProps, _EmployeeManageState>
+  implements OpenDrawer {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
+  private createApi: ApiService<EmployeeListEntityResponseDTO>;
+
+  constructor(
+    props: EmployeeManageProps,
+    context: React.ContextType<typeof AuthContext>
+  ) {
+    super(props, context);
+    this.createApi = new ApiService(context, {
+      method: "POST",
+      url: "/employee",
+    });
+  }
+
+  private onClose = () => {
+    this.formRef.current?.resetFields();
+    this.createApi.reset();
+  };
+
+  state: _EmployeeManageState = {
+    visible: false,
+  };
+
+  formRef = React.createRef<FormInstance>();
+
+  openDrawer = () => {
+    this.setState({ visible: true });
+  };
+
+  onCreate = async () => {
     try {
-      const formData = await form.validateFields();
-      const res = await create(formData);
+      const formData = await this.formRef.current?.validateFields();
+      const res = await this.createApi.run(formData);
       if (res) {
-        setVisible(false);
-        onCreate(res.data);
+        this.props.onCreate(res.data);
+        this.setState({ visible: false });
       }
+      this.forceUpdate();
     } catch {}
   };
 
-  return (
-    <Drawer
-      title={"Create a new Employee"}
-      width={420}
-      visible={visible}
-      afterVisibleChange={(visible) => {
-        if (!visible) form.resetFields();
-      }}
-      closable={false}
-      bodyStyle={{ paddingBottom: 80 }}
-      footer={
-        <div
-          style={{
-            textAlign: "right",
-          }}
-        >
-          <Button
-            disabled={loading}
-            onClick={() => setVisible(false)}
-            style={{ marginRight: 8 }}
+  render() {
+    const { error, loading } = this.createApi;
+
+    return (
+      <Drawer
+        title={"Create a new Employee"}
+        width={420}
+        visible={this.state.visible}
+        afterVisibleChange={(visible) => {
+          if (!visible) this.onClose();
+        }}
+        closable={false}
+        bodyStyle={{ paddingBottom: 80 }}
+        footer={
+          <div
+            style={{
+              textAlign: "right",
+            }}
           >
-            Cancel
-          </Button>
-          <Button
-            disabled={loading}
-            loading={loading}
-            onClick={_onCreate}
-            type="primary"
-          >
-            Create
-          </Button>
-          )
-        </div>
-      }
-    >
-      <Form
-        form={form}
-        labelAlign="left"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
+            <Button
+              disabled={loading}
+              onClick={() => this.setState({ visible: false })}
+              style={{ marginRight: 8 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={loading}
+              loading={loading}
+              onClick={this.onCreate}
+              type="primary"
+            >
+              Create
+            </Button>
+            )
+          </div>
+        }
       >
-        {error ? (
-          <Alert
-            message={<AlertMessage message={error.message} />}
-            type="error"
-            style={{ marginBottom: "16px" }}
-            showIcon
-          />
-        ) : null}
-        <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: "Please input the username!" }]}
+        <Form
+          ref={this.formRef}
+          labelAlign="left"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
         >
-          <Input placeholder="Username" />
-        </Form.Item>
-        <Form.Item label="Role" name="role" rules={[{ required: true }]}>
-          <Select placeholder="Select a role">
-            {Roles.map((e) => (
-              <Select.Option value={e} key={e}>
-                {e}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: "Please input the Password!" }]}
-        >
-          <Input type="password" placeholder="Password" />
-        </Form.Item>
-      </Form>
-    </Drawer>
-  );
-};
+          {error ? (
+            <Alert
+              message={<AlertMessage message={error.message} />}
+              type="error"
+              style={{ marginBottom: "16px" }}
+              showIcon
+            />
+          ) : null}
+          <Form.Item
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: "Please input the username!" }]}
+          >
+            <Input placeholder="Username" />
+          </Form.Item>
+          <Form.Item label="Role" name="role" rules={[{ required: true }]}>
+            <Select placeholder="Select a role">
+              {Roles.map((e) => (
+                <Select.Option value={e} key={e}>
+                  {e}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: "Please input the Password!" }]}
+          >
+            <Input type="password" placeholder="Password" />
+          </Form.Item>
+        </Form>
+      </Drawer>
+    );
+  }
+}
